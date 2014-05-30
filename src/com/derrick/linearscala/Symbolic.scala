@@ -51,12 +51,21 @@ import com.derrick.linearscala.variable.DoubleVariableImplicits._
   class Expression { //extends Symbolic {
 
     private val _symbolicVariables = scala.collection.mutable.Map[String, Variable]()
+    private var _isDouble: Boolean = false;
+    
+    
     def symbolicVariables = _symbolicVariables
 
     private var _numericValue: Double = 0.0;
     def numericValue = _numericValue
 
     def this(x: Double) = { this(); _numericValue = x }
+    
+    def this(x: Double, isDouble: Boolean) {
+      this()
+      _numericValue = x 
+      _isDouble = isDouble
+    }
 
     def constraint(expression: Expression, constraint: ConstraintType.Value) = new Constraint(this, constraint, expression)
 
@@ -77,6 +86,12 @@ import com.derrick.linearscala.variable.DoubleVariableImplicits._
       case expression: Variable => this >= (new Expression(expression))
       case _ => println(expression); return null
     }
+    
+//    def *(expression: Any): Expression = expression match {
+//      case expression: Double => {
+//        this._numericValue = 3.0
+//      }
+//    }
 
     def getVariableIndentifiers = for (v <- this.symbolicVariables) yield v._1
 
@@ -203,9 +218,15 @@ import com.derrick.linearscala.variable.DoubleVariableImplicits._
     def constant = _constant
 
   }
+  
+  class Numeric (val value:Double) {
+    
+  }
+  
 
-  object DoubleVariableImplicits {
-    //implicit def Double2Variable(value: Double) = new Variable(value)
+
+object DoubleVariableImplicits {
+    implicit def Double2Variable(value: Double) = new Variable()
   }
 
   
