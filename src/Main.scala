@@ -30,19 +30,25 @@ object Main {
     val y = new Variable("y", 1.0)
     val lp2 = new LinearProblem()
     
-//    println(4.0 + x)
-//    println(4.0*x)
-    
-
     lp2 += x * 5.0 + y * 10.0
     lp2 += x * 3.0 + y * 1.0 >= 8.3
-    
-    //lp2 += y * 4.0 >= 4.0			// this is probably a better idea
-    lp2 += 4.0 *: y >= 4.0			// don't really like this though
-    
+    lp2 += y * 4.0 >= 4.0			// this is probably a better idea
     lp2 += x * 2.0 <= 2.0
 
     lp2.solve
+    
+    
+    
+    
+    
+     println(30.2+x);
+    
+    
+    
+    
+    
+    
+    
     
     /** OR before the old annoying way in java which is terrible**/
 
