@@ -11,8 +11,12 @@ package com.derrick.linearscala.symoblic
     val E = Value("==")
     val GE = Value(">=")
   }
+  
+  trait VariableIdentifiable {
+    def getVariableIndentifiers():Iterable[String]
+  }
 
-  class Constraint(val left: SymbolicVar, val constraint: ConstraintType.Value, val right: SymbolicVar) { //} extends Symbolic {
+  class Constraint(val left: SymbolicVar, val constraint: ConstraintType.Value, val right: SymbolicVar) extends VariableIdentifiable {
     def getVariableIndentifiers = for (v <- (left.variables ++ right.variables)) yield v._1
     def getStandardized(): SymbolicVar = {
       this.right - this.left
@@ -26,7 +30,8 @@ package com.derrick.linearscala.symoblic
     def apply(v: String) = new SymbolicVar(v)
   }
 
-  case class SymbolicVar(val _variables: Map[String, Double], val _numeric: Double, val _isNumeric: Boolean = false) {
+  case class SymbolicVar(val _variables: Map[String, Double], val _numeric: Double, val _isNumeric: Boolean = false)
+  	   extends VariableIdentifiable {
 
     def variables: Map[String, Double] = _variables;
     def numeric: Double = _numeric;
