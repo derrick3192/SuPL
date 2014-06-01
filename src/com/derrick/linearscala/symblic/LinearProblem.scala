@@ -5,6 +5,7 @@ import _root_.com.derrick.linearscala.symblic._
 
 import scpsolver.constraints.LinearBiggerThanEqualsConstraint;
 import scpsolver.constraints.LinearSmallerThanEqualsConstraint;
+import scpsolver.constraints.LinearConstraint
 import scpsolver.constraints.LinearEqualsConstraint
 import scpsolver.lpsolver.LinearProgramSolver;
 import scpsolver.lpsolver.SolverFactory;
@@ -110,6 +111,7 @@ class LinearProblem {
       case ConstraintType.LE => lp.addConstraint(new LinearSmallerThanEqualsConstraint(constraintArray, constraintValue, ""))
       case ConstraintType.E => lp.addConstraint(new LinearEqualsConstraint(constraintArray, constraintValue, ""))
       case ConstraintType.GE => lp.addConstraint(new LinearBiggerThanEqualsConstraint(constraintArray, constraintValue, ""))
+      //case ConstraintType.NE => lp.addConstraint(new Constraint(constraintArray, constraintValue, ""))
     }
   }
 

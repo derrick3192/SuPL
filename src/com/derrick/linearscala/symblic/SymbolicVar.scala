@@ -9,7 +9,6 @@ package com.derrick.linearscala.symoblic
   class ConstraintType extends Enumeration {
     val LE = Value("<=")
     val E = Value("==")
-    val NE = Value("!=")
     val GE = Value(">=")
   }
 
@@ -98,10 +97,6 @@ package com.derrick.linearscala.symoblic
     def ==(that:SymbolicVar):Constraint = new Constraint(this,ConstraintType.E, that)
     def ==(that:Double):Constraint = this == (new SymbolicVar(that))
     
-    def !=(that:SymbolicVar):Constraint = new Constraint(this,ConstraintType.NE, that)
-    def !=(that:Double):Constraint = this != (new SymbolicVar(that))
-    
-    
     def getVariableIndentifiers = for (v <- this.variables) yield v._1
 
   }
@@ -153,6 +148,22 @@ package com.derrick.linearscala.symoblic
     lp2 += x * 2.0 <= 2.0
 
     lp2.solve
+    
+    
+        /** OR before the old annoying way in java which is terrible**/
+
+//    val lp: LinearProgram = new LinearProgram(Array(5.0, 10.0));
+//    lp.addConstraint(new LinearBiggerThanEqualsConstraint(Array(3.0, 1.0), 8.30, "c1"));
+//    lp.addConstraint(new LinearBiggerThanEqualsConstraint(Array(0.0, 4.0), 4.0, "c2"));
+//    lp.addConstraint(new LinearSmallerThanEqualsConstraint(Array(2.0, 0.0), 2.0, "c3"));
+//    lp.setMinProblem(true);
+//    val solver = SolverFactory.newDefault();
+//    val sol = solver.solve(lp);
+//
+//    // printing out the values
+//    for (v <- sol) {
+//      System.out.println(v);
+//    }
     }
   }
 
