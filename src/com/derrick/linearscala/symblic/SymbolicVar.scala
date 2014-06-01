@@ -1,4 +1,4 @@
-package com.derrick.linearscala.symoblic {
+package com.derrick.linearscala.symoblic 
 
   import collection.immutable.HashMap
   import com.sun.xml.internal.bind.v2.runtime.IllegalAnnotationsException
@@ -9,7 +9,16 @@ package com.derrick.linearscala.symoblic {
   class ConstraintType extends Enumeration {
     val LE = Value("<=")
     val E = Value("==")
+    val NE = Value("!=")
     val GE = Value(">=")
+  }
+
+  class Constraint(val left: SymbolicVar, val constraint: ConstraintType.Value, val right: SymbolicVar) { //} extends Symbolic {
+    def getVariableIndentifiers = for (v <- (left.variables ++ right.variables)) yield v._1
+    def getStandardized(): SymbolicVar = {
+      this.right - this.left
+    }
+    override def toString() = this.left.toString + " " + this.constraint + " " + right.toString
   }
 
   object SymbolicVar {
@@ -26,15 +35,21 @@ package com.derrick.linearscala.symoblic {
 
     def apply(v: Map[String, Double]) = new SymbolicVar(v)
     def apply(x: Double) = new SymbolicVar(x)
+    def apply() = new SymbolicVar()
 
     def this(x: Double) = this(Map(), x, true)
     def this(v: Map[String, Double]) = this(v, 0.0)
     def this(v: String) = this(Map(v -> 1.0), 0.0, false)
+    def this() = this(0.0d)
 
     // Operator overloading with a SymbolicVar
+    
+    
+    def unary_- = new SymbolicVar(this.variables.map{case (k, v) => k -> -v}, -this.numeric)
+    
 
     def applyFunction(that: SymbolicVar, f: (Double, Double) => Double): SymbolicVar = {
-      val variables = SymbolicVar.this.variables ++ that.variables.map { case (k, v) => k -> f(SymbolicVar.this.variables.getOrElse(k, 0.0), v) }
+      val variables = this.variables ++ that.variables.map { case (k, v) => k -> f(SymbolicVar.this.variables.getOrElse(k, 0.0), v) }
       val numeric = f(this.numeric, that.numeric)
       return new SymbolicVar(variables, numeric)
     }
@@ -74,7 +89,20 @@ package com.derrick.linearscala.symoblic {
 
     // Constraint constructs
 
-    //def <=(Double:that) = 
+    def <=(that:SymbolicVar):Constraint = new Constraint(this,ConstraintType.LE, that)
+    def <=(that:Double):Constraint = this <= (new SymbolicVar(that))
+    
+    def >=(that:SymbolicVar):Constraint = new Constraint(this,ConstraintType.GE, that)
+    def >=(that:Double):Constraint = this >= (new SymbolicVar(that))
+    
+    def ==(that:SymbolicVar):Constraint = new Constraint(this,ConstraintType.E, that)
+    def ==(that:Double):Constraint = this == (new SymbolicVar(that))
+    
+    def !=(that:SymbolicVar):Constraint = new Constraint(this,ConstraintType.NE, that)
+    def !=(that:Double):Constraint = this != (new SymbolicVar(that))
+    
+    
+    def getVariableIndentifiers = for (v <- this.variables) yield v._1
 
   }
 
@@ -96,19 +124,35 @@ package com.derrick.linearscala.symoblic {
       //
       //      println(zz + zy * 3.0)
 
-      val xy = SymbolicVar(Map("x" -> 3.0d, "y" -> 2.0d))
-      val yx = SymbolicVar(Map("x" -> -3.0d, "y" -> -2.0d))
+      
+      // HERE IS ONE
+      
+//      val xy = SymbolicVar(Map("x" -> 3.0d, "y" -> 2.0d))
+//      val yx = SymbolicVar(Map("x" -> -3.0d, "y" -> -2.0d))
+//
+//      println(xy + yx)
+//
+//      val x = SymbolicVar("x")
+//      val x2 = SymbolicVar("x") * 2.0
+//      println(2.0 * x - 2.0 - 2 * x + 2.0)
+//
+//      println(10 * x)
+//      println(10 * x / 10 * 20 - 10 - 20 * x + 10) //incorrect
+//      println(-10 - 20 * x + 10)
+      
+      // HERE IS ANOTHER
+      
+      
+    val x = SymbolicVar("x")
+    val y = new SymbolicVar("y")
+    val lp2 = new LinearProblem()
+    
+    lp2 += x * 5.0 + y * 10.0
+    lp2 += x * 3.0 + y * 1.0 >= 8.3
+    lp2 += y * 4.0 >= 4.0			// this is probably a better idea
+    lp2 += x * 2.0 <= 2.0
 
-      println(xy + yx)
-
-      val x = SymbolicVar("x")
-      val x2 = SymbolicVar("x") * 2.0
-      println(2.0 * x - 2.0 - 2 * x + 2.0)
-
-      println(10 * x)
-      println(10 * x / 10 * 20 - 10 - 20 * x + 10) //incorrect
-      println(-10 - 20 * x + 10)
+    lp2.solve
     }
   }
 
-}
